@@ -192,13 +192,14 @@ jobs:
           config --enable CONFIG_REKERNEL_NETWORK
           
 
-      - name: 添加SSG IO调速器
-        if: inputs.ssg
+      - name: Config SSG I/O scheduler
+        if: ${{ !inputs.ssg }}
         run: |
-          echo "正在启用三星SSG IO调度器"
+          echo "Disabling SSG I/O scheduler"
           source /tmp/config.sh
-          config --enable CONFIG_MQ_IOSCHED_SSG
-          config --enable CONFIG_MQ_IOSCHED_SSG_CGROUP
+          config --disable CONFIG_MQ_IOSCHED_SSG
+          config --disable CONFIG_MQ_IOSCHED_SSG_CGROUP
+          config --disable CONFIG_MQ_SSG_DEFAULT
           
       - name: 添加lxc
         if: inputs.lxc
