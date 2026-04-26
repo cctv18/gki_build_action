@@ -39,6 +39,11 @@ on:
         required: true
         type: boolean
         default: true
+      lto_none:
+        description: '是否关闭LTO优化(测试性；大幅提升编译速度)'
+        required: true
+        type: boolean
+        default: true
       tmpfs:
         description: '是否开启对于mountify 的支持'
         required: true
@@ -230,6 +235,16 @@ jobs:
 
       - name: 杂项设置
         run: cd kernel_workspace && sed -i 's/check_defconfig//' ./common/build.config.gki
+
+      - name: 关闭LTO
+        if: inputs.lto_none
+        run: |
+          source /tmp/config.sh
+          config --disable CONFIG_ARCH_SUPPORTS_LTO_CLANG
+          config --disable CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN
+          config --disable CONFIG_LTO_CLANG_THIN
+          config --disable CONFIG_LTO_CLANG_FULL
+          config --enable CONFIG_LTO_NONE
 
       - name: 启用网络功能增强优化配置
         if: inputs.better_net
