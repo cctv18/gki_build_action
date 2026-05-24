@@ -231,6 +231,9 @@ jobs:
           config --enable CONFIG_KEXEC_JUMP
           config --enable CONFIG_CRASH_DUMP
           config --enable CONFIG_CRASH_HOTPLUG
+          config --enable CONFIG_PROC_VMCORE
+          config --enable CONFIG_PROC_VMCORE_DEVICE_DUMP
+          config --enable CONFIG_PROC_KCORE
 
       - name: LTO设置
         run: |
