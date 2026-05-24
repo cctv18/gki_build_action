@@ -34,6 +34,11 @@ on:
         required: true
         type: boolean
         default: false
+      kexec:
+        description: '是否启用kexec支持'
+        required: true
+        type: boolean
+        default: false
       baseband_guard:
         description: '是否开启内核级基带保护(阻止一切对非用户分区的写入，有效防止格机)'
         required: true
@@ -217,6 +222,16 @@ jobs:
           curl -fLSs "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/patches/memblock.patch" -o memblock.patch
           patch -p1 --fuzz=3 < memblock.patch
 
+      - name: 开启Kexec支持
+        if: inputs.kexec
+        run: |
+          source /tmp/config.sh
+          config --enable CONFIG_KEXEC
+          config --enable CONFIG_KEXEC_FILE
+          config --enable CONFIG_KEXEC_JUMP
+          config --enable CONFIG_CRASH_DUMP
+          config --enable CONFIG_CRASH_HOTPLUG
+
       - name: LTO设置
         run: |
           source /tmp/config.sh
@@ -392,6 +407,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           STOCK_CONFIG: ${{ inputs.stock_config }}
           LXC: ${{ inputs.lxc }}
+          KEXEC: ${{ inputs.kexec }}
           LTO: ${{ inputs.lto }}
           DROIDSPACES: ${{ inputs.droidspaces }}
           BBG: ${{ inputs.baseband_guard }}
