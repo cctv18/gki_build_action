@@ -15,6 +15,9 @@ MOUNTIFY = os.environ.get("MOUNTIFY")
 STOCK_CONFIG = os.environ.get("STOCK_CONFIG")
 DROIDSPACES = os.environ.get("DROIDSPACES")
 LTO = os.environ.get("LTO")
+UNSHARE = os.environ.get("UNSHARE")
+NTSYNC = os.environ.get("NTSYNC")
+RESUKISU = os.environ.get("RESUKISU")
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = int(os.environ.get("CHAT_ID"))
@@ -22,14 +25,17 @@ RUN_URL = os.environ.get("RUN_URL")
 BOT_CI_SESSION = os.environ.get("BOT_CI_SESSION")
 MSG_TEMPLATE = """
 **New Build Published!**
-*LTO: {lto}*
+**LTO: {lto}**
 ```Kernel Info
 kernelver: {kernelversion}
 stock: {stock}
+resukisu: {resukisu}
 BBG: {bbg}
+unshare: {unshare}
 Mountify support: {mountify}
 lxc/docker support {lxc}
 droidspaces: {droidspaces}
+ntsync: {ntsync}
 better net support: {better_net}
 ```
 Please follow @esk_gki_build !
@@ -43,9 +49,12 @@ def get_caption():
         lto=LTO,
         kernelversion=get_kernel_versions(),
         stock=STOCK_CONFIG,
+        unshare=UNSHARE,
+        resukisu=RESUKISU,
         mountify=MOUNTIFY,
         lxc=LXC,
         droidspaces=DROIDSPACES,
+        ntsync=NTSYNC,
         bbg=BBG,
         better_net=BETTER_NET,
         run_url=RUN_URL,
