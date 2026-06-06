@@ -39,6 +39,11 @@ on:
         required: true
         type: boolean
         default: false
+      kexec:
+        description: '是否启用kexec支持'
+        required: true
+        type: boolean
+        default: false
       kernelsu:
         description: '是否开启内建kernelsu(resukisu)'
         required: true
@@ -240,6 +245,19 @@ jobs:
           sed -i 's/check_defconfig//' ./build.config.gki
           curl -fLSs "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/patches/memblock.patch" -o memblock.patch
           patch -p1 --fuzz=3 < memblock.patch
+
+      - name: 开启Kexec支持
+        if: inputs.kexec
+        run: |
+          source /tmp/config.sh
+          config --enable CONFIG_KEXEC
+          config --enable CONFIG_KEXEC_FILE
+          config --enable CONFIG_KEXEC_JUMP
+          config --enable CONFIG_CRASH_DUMP
+          config --enable CONFIG_CRASH_HOTPLUG
+          config --enable CONFIG_PROC_VMCORE
+          config --enable CONFIG_PROC_VMCORE_DEVICE_DUMP
+          config --enable CONFIG_PROC_KCORE
 
       - name: LTO设置
         run: |
@@ -458,6 +476,7 @@ jobs:
           RESUKISU: ${{ inputs.kernelsu }}
           UNSHARE: ${{ inputs.unshare }}
           LXC: ${{ inputs.lxc }}
+          KEXEC: ${{ inputs.kexec }}
           LTO: ${{ inputs.lto }}
           DROIDSPACES: ${{ inputs.droidspaces }}
           NTSYNC: ${{ inputs.ntsync }}
@@ -480,7 +499,8 @@ jobs:
           path: ${{ github.workspace }}/kernel_workspace/ccache.log
 
       - name: 上传 ZIP 工件
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AnyKernel3
           path: ${{ github.workspace }}/kernel_workspace/*.zip
+          archive: false
